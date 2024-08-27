@@ -50,7 +50,6 @@ data:
     train_data_root: data/ForestNetDataset/train
     val_data_root: data/ForestNetDataset/val
     test_data_root: data/ForestNetDataset/test
-    img_grep: "*.tif"
     means:
       - 0.107582
       - 0.13471393
@@ -65,12 +64,15 @@ data:
       - 0.09489725
       - 0.07938496
       - 0.07089546
-    num_classes: 10
+    num_classes: 12
     train_transform:
-      - class_path: albumentations.augmentations.geometric.resize.Resize
+      - class_path: albumentations.RandomCrop
         init_args:
           height: 224
           width: 224
+      - class_path: albumentations.HorizontalFlip
+        init_args:
+          p: 0.5
       - class_path: ToTensorV2
     val_transform:
       - class_path: albumentations.augmentations.geometric.resize.Resize
@@ -86,13 +88,15 @@ data:
       - class_path: ToTensorV2
 
 model:
-  class_path: terratorch.tasks.SemanticSegmentationTask 
+  class_path: terratorch.tasks.ClassificationTask
   init_args:
     model_args:
-      decoder: FCNDecoder
+      decoder: IdentityDecoder
       pretrained: true
       backbone: prithvi_vit_100
-      decoder_channels: 256
+      head_dim_list:
+        - 384
+        - 128
       in_channels: 6
       bands:
         - BLUE
@@ -102,35 +106,15 @@ model:
         - SWIR_1
         - SWIR_2
       num_frames: 1
-      num_classes: 10
+      num_classes: 12
       head_dropout: 0.1
-      decoder_num_convs: 4
-      head_channel_list:
-        - 256
     loss: ce
-    aux_heads:
-      - name: aux_head
-        decoder: FCNDecoder
-        decoder_args:
-          decoder_channels: 256
-          decoder_in_index: -1
-          decoder_num_convs: 2
-          head_dropout: 0.1
-          # head_channel_list:
-          #   - 64
-    aux_loss:
-      aux_head: 1.0
-    ignore_index: -1
-    class_weights:
-      - 0.3
-      - 0.7
     freeze_backbone: false
-    freeze_decoder: false
     model_factory: PrithviModelFactory
 optimizer:
   class_path: torch.optim.AdamW
   init_args:
-    lr: 6.e-5
+    lr: 1.e-4
     weight_decay: 0.05
 lr_scheduler:
   class_path: ReduceLROnPlateau

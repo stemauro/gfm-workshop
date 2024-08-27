@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 
 def main():
-    data_dir = os.getenv('DATA_DIR', '../data')
+    data_dir = os.getenv('DATA_DIR', 'data')
     dataset_dir = Path(data_dir) / 'ForestNetDataset'
 
     assert dataset_dir.is_dir(), \
@@ -22,7 +22,7 @@ def main():
         # Create class dirs
         # Expected structure by the TerraTorch generic classification dataset, see:
         # from terratorch.datasets import GenericNonGeoClassificationDataset
-        from terratorch.datamodules import GenericNonGeoClassificationDataModule
+        # from terratorch.datamodules import GenericNonGeoClassificationDataModule
         class_names = examples['label'].unique()
         for class_name in class_names:
             (dataset_dir / split / class_name).mkdir(exist_ok=True, parents=True)

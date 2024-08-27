@@ -1,7 +1,7 @@
 # Dataset preparation
 
 TerraTorch is a fine-tuning toolkit for Geospatial Foundation Models (GeoFMs). 
-It uses PyTorch-Lighting for training, which enables quick fine-tuning of GeoFMs based on a config yaml file.
+It uses PyTorch-Lighting for training, which enables quick fine-tuning of GeoFMs.
 You find the documentation here: https://ibm.github.io/terratorch/quick_start/.
 
 ## Setup
@@ -12,6 +12,7 @@ python -m venv venv
 source venv/bin/activate
 pip install terratorch
 ```
+Please test that a torch version 
 
 ## Generic dataset classes
 TerraTorch comes with some generic dataset classes and data modules. 
@@ -87,9 +88,10 @@ ForestNetDataset
 ```
 
 We provide some example code to prepare the ForestNet dataset in [preprocess_forestnet.py](datasets/preprocess_forestnet.py).
-You need to preprocess your dataset in a similar way if you like to use the generic dataset classes.
-
-Config example: TODO
+You need to preprocess your dataset in a similar way if you like to use the generic dataset classes. You can run the sample code with:
+```shell
+python datasets/preprocess_forestnet.py
+```
 
 ### Scalar Regression 
 `GenericScalarLabelDataset`
@@ -113,3 +115,7 @@ Config example: https://github.com/IBM/terratorch/blob/main/examples/confs/euros
 
 ### Custom Datamodule
 TODO
+
+## Fine-tuning
+
+Next step: Fine-tuning with [TERRATORCH.md](TERRATORCH.md).
