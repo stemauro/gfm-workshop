@@ -28,7 +28,7 @@ data:
   init_args:
     batch_size: 16
     num_workers: 8
-    constant_scale: 0.004  # Scale 0-255 to 0-1
+    constant_scale: 39.216  # Scale 0-255 to 0-10000 (HLS data)
     dataset_bands:
       - BLUE
       - GREEN
@@ -51,19 +51,19 @@ data:
     val_data_root: data/ForestNetDataset/val
     test_data_root: data/ForestNetDataset/test
     means:
-      - 0.107582
-      - 0.13471393
-      - 0.12520133
-      - 0.3236181
-      - 0.2341743
-      - 0.15878009
+      - 775.229
+      - 1080.992
+      - 1228.585
+      - 2497.202
+      - 2204.213
+      - 1610.832
     stds:
-      - 0.07145836
-      - 0.06783548
-      - 0.07323416
-      - 0.09489725
-      - 0.07938496
-      - 0.07089546
+      - 1281.526
+      - 1270.029
+      - 1399.480
+      - 1368.344
+      - 1291.676
+      - 1154.505
     num_classes: 12
     train_transform:
       - class_path: albumentations.RandomCrop
