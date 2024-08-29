@@ -12,14 +12,25 @@ python -m venv venv
 source venv/bin/activate
 pip install terratorch
 ```
-Please test that a torch version 
 
 ## Generic dataset classes
+
 TerraTorch comes with some generic dataset classes and data modules. 
 If your data is the expected format, you can directly fine-tune a model without any additional Python code.
 Alternatively, you can use `torchgeo` data modules or create your custom `Dataset` and `DataModule`.
 
-The datasets are loaded by data modules 
+The data module is responsible for loading all splits in PyTorch-Lighting. It initializes a dataset for each split.
+You define the required parameters of the data module in the config which you pass to TerraTorch.
+If the parameters are not clearly defined, check the dataset documentation (e.g. `train_split` is passed to the `split` parameter for the train dataset.)
+
+The data parameters are specified in a yaml config, together with other parameters for the model and the training. We explain the config in the workshop.
+
+All generic datasets are loading images and masks with `rioxarray`. You can check if your data is correctly formated by running:
+
+```python
+import rioxarray
+data = rioxarray.open_rasterio('<example_image_path>', masked=True)
+```
 
 ### Classification
 Documentation: [GenericNonGeoClassificationDataset](https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_scalar_label_dataset.GenericNonGeoClassificationDataset)
@@ -50,8 +61,13 @@ DatasetDirectory
     └── ClassN
 ```
 
+We provide some example code to prepare the ForestNet dataset in [preprocess_forestnet.py](datasets/preprocess_forestnet.py).
+You need to preprocess your dataset in a similar way if you like to use the generic dataset classes. You can run the sample code with:
+```shell
+python datasets/preprocess_forestnet.py
+```
 
-Here is an example for the ForestNet dataset.
+Here is the expected ForestNet dataset structure after the preprocessing.
 ```text
 ForestNetDataset
 ├── train
@@ -87,34 +103,131 @@ ForestNetDataset
     └── Timber plantation
 ```
 
-We provide some example code to prepare the ForestNet dataset in [preprocess_forestnet.py](datasets/preprocess_forestnet.py).
-You need to preprocess your dataset in a similar way if you like to use the generic dataset classes. You can run the sample code with:
-```shell
-python datasets/preprocess_forestnet.py
+
+The dataset is represented in the config as follows:
+
+```yaml
+data:
+  class_path: GenericNonGeoClassificationDataModule
+    train_data_root: data/ForestNetDataset/train
+    val_data_root: data/ForestNetDataset/val
+    test_data_root: data/ForestNetDataset/test
+    num_classes: 12
+    ...
 ```
 
-### Scalar Regression 
-`GenericScalarLabelDataset`
-Documentation: https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_scalar_label_dataset.GenericScalarLabelDataset
-Config example: TODO
+### Scalar Regression
+Documentation: [GenericScalarLabelDataset](https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_scalar_label_dataset.GenericScalarLabelDataset)
+
+Single-value regression is currently not supported in a generic DataModule.
 
 ### Segmentation
-`GenericNonGeoSegmentationDataset`
-Documentation: https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_pixel_wise_dataset.GenericNonGeoSegmentationDataset
-Config example: https://github.com/IBM/terratorch/blob/main/examples/confs/sen1floods11_vit.yaml
+Documentation: [GenericNonGeoSegmentationDataset](https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_pixel_wise_dataset.GenericNonGeoSegmentationDataset)
+and [GenericNonGeoSegmentationDataModule](https://ibm.github.io/terratorch/data/#terratorch.datamodules.generic_pixel_wise_data_module.GenericNonGeoSegmentationDataModule)
+
+TerraTorch expects the annotation maps to have a single band with the class indices as values (no RGB class combinations). 
+You can place the annotation maps in the same directory and provide `img_grep` and `label_grep` in the config to identify the image-label pairs.
+Alternatively, you can store the labels in an extra directory and provide `<split>_label_data_root` additionally to the `<split>_data_root`.
+In a third option, you can provide a path to split file with `<split>_split`. The file should contain new-line separated prefixes (substrings) of the samples.
+
+Here is an example of the MADOS Dataset structure after running `python datasets/preprocess_mados.py`. 
+```text
+MADOS
+├── train
+│   ├── Scene_0_1_S2.tif
+│   ├── Scene_0_1_annotation.tif
+│   └── ...
+├── val
+│   ├── Scene_100_1_S2.tif
+│   ├── Scene_100_1_annotation.tif
+│   └── ...
+└── test
+    ├── Scene_131_1_S2.tif
+    ├── Scene_131_1_annotation.tif
+    └── ...
+```
+
+With this structure, we define the dataset in the config as follows: 
+```yaml
+data:
+  class_path: GenericNonGeoSegmentationDataModule
+    train_data_root: data/MADOS/train
+    val_data_root: data/MADOS/val
+    test_data_root: data/MADOS/test    
+    img_grep: "*_S2.tif"
+    label_grep: "*_annotation.tif"
+    num_classes: 16
+    ...
+```
 
 ### Pixelwise Regression
-`GenericNonGeoPixelwiseRegressionDataset`
-Documentation: https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_pixel_wise_dataset.GenericNonGeoPixelwiseRegressionDataset
-Config example: https://huggingface.co/ibm-granite/granite-geospatial-biomass/blob/main/config.yaml
+Documentation: [GenericNonGeoPixelwiseRegressionDataset](https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_pixel_wise_dataset.GenericNonGeoPixelwiseRegressionDataset)
+and [GenericNonGeoPixelwiseRegressionDataModule](https://ibm.github.io/terratorch/data/#terratorch.datamodules.generic_pixel_wise_data_module.GenericNonGeoPixelwiseRegressionDataModule)
+
+The expected data structure is similar to segmentation. Instead of class indices, the label maps represent the ground truth regression values per pixel.
 
 ### Torchgeo Datamodule
-`torchgeo.datamodules`
-Documentation with list of all available datasets: https://torchgeo.readthedocs.io/en/stable/api/datamodules.html#non-geospatial-datamodules
-Config example: https://github.com/IBM/terratorch/blob/main/examples/confs/eurosat.yaml
+Documentation: [TorchNonGeoDataModule](https://ibm.github.io/terratorch/data/#terratorch.datamodules.torchgeo_data_module.TorchNonGeoDataModule)
+and [TorchGeoDataModule](https://ibm.github.io/terratorch/data/#terratorch.datamodules.torchgeo_data_module.TorchGeoDataModule)
+
+You can use any torchgeo dataset out of the box by using the TerraTorch TorchDataModules.
+
+Here is an example from the [EuroSat config](https://github.com/IBM/terratorch/blob/main/examples/confs/eurosat.yaml) that defines the dataset.
+
+```yaml
+data:
+  class_path: terratorch.datamodules.TorchNonGeoDataModule
+  init_args:
+    transforms:
+      - class_path: albumentations.augmentations.geometric.resize.Resize
+        init_args:
+          height: 224
+          width: 224
+      - class_path: ToTensorV2
+    cls: torchgeo.datamodules.EuroSATDataModule
+    batch_size: 32
+    num_workers: 8
+  dict_kwargs:
+    root: /dccstor/geofm-pre/EuroSat
+    download: True
+    bands:
+      - B02
+      - B03
+      - B04
+      - B08A
+      - B11
+      - B12
+```
+
+List of all available datasets in torchgeo: https://torchgeo.readthedocs.io/en/stable/api/datamodules.html#non-geospatial-datamodules
 
 ### Custom Datamodule
-TODO
+
+You can write custom scripts for the dataset and data module and refer to the in the config.
+
+```yaml
+data:
+  class_path: path.to.CustomDataModule
+  init_args:
+    parameter: value
+    ...
+```
+
+Check the generic dataset and data module code for inspiration.
+
+## Dataset ideas
+
+You are looking for a dataset that you can use in the workshop?
+
+Check the [torchgeo datasets](https://torchgeo.readthedocs.io/en/stable/api/datamodules.html#non-geospatial-datamodules), as they should work out of the box.
+
+Other dataset collections:
+- https://github.com/chrieke/awesome-satellite-imagery-datasets
+- https://eod-grss-ieee.com/dataset-search
+- https://earthnets.github.io
+
+Ideally, you select a classification, segmentation, or pixel-wise regression dataset with single timestamps, so you can use TerraTorch's generic dataset classes.
+
 
 ## Fine-tuning
 
