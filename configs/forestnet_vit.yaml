@@ -111,6 +111,19 @@ model:
     loss: ce
     freeze_backbone: false
     model_factory: PrithviModelFactory
+    class_names:
+      - Fish pond
+      - Grassland shrubland
+      - Logging
+      - Mining
+      - Oil palm plantation
+      - Other
+      - Other large-scale plantations
+      - Secondary forest
+      - Small-scale agriculture
+      - Small-scale mixed plantation
+      - Small-scale oil palm plantation
+      - Timber plantation
 optimizer:
   class_path: torch.optim.AdamW
   init_args:

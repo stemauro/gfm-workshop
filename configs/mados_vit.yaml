@@ -156,6 +156,23 @@ model:
     freeze_backbone: false
     freeze_decoder: false
     model_factory: PrithviModelFactory
+    class_names:
+      - Others
+      - Marine Debris
+      - Dense Sargassum
+      - Sparse Floating Algae
+      - Natural Organic Material
+      - Ship
+      - Oil Spill
+      - Marine Water
+      - Sediment-Laden Water
+      - Foam
+      - Turbid Water
+      - Shallow Water
+      - Waves & Wakes
+      - Oil Platform
+      - Jellyfish
+      - Sea snot
 optimizer:
   class_path: torch.optim.AdamW
   init_args:
