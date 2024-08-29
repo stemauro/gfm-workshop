@@ -1,3 +1,10 @@
+"""
+Irvin, J et al.(2020).
+ForestNet: Classifying Drivers of Deforestation in Indonesia using Deep Learning on Satellite Imagery.
+In NeurIPS 2020 workshop on Tackling Climate Change with Machine Learning.
+
+More information about the dataset: https://stanfordmlgroup.github.io/projects/forestnet/
+"""
 
 import os
 import tqdm
@@ -15,6 +22,8 @@ def main():
 
     assert dataset_dir.is_dir(), \
         "Please download the ForestNetDataset by running `bash datasets/download_forestnet.sh`."
+
+    default_transform = rio.transform.from_bounds(0, 0, 332, 332, width=332, height=332)
 
     for split in ['train', 'val', 'test']:
         examples = pd.read_csv(dataset_dir / f'{split}.csv')
@@ -52,6 +61,7 @@ def main():
                           height=332,
                           width=332,
                           dtype=stacked.dtype,
+                          transform=default_transform,  # Adding wrong geotransform to avoid NotGeoreferencedWarning
                           count=6) as dst:
                 dst.write(stacked)
 
