@@ -116,6 +116,8 @@ data:
     ...
 ```
 
+The class indices are based on the alphabetic order of the class names (folder names).
+
 ### Scalar Regression
 Documentation: [GenericScalarLabelDataset](https://ibm.github.io/terratorch/data/#terratorch.datasets.generic_scalar_label_dataset.GenericScalarLabelDataset)
 
@@ -130,20 +132,16 @@ You can place the annotation maps in the same directory and provide `img_grep` a
 Alternatively, you can store the labels in an extra directory and provide `<split>_label_data_root` additionally to the `<split>_data_root`.
 In a third option, you can provide a path to split file with `<split>_split`. The file should contain new-line separated prefixes (substrings) of the samples.
 
-Here is an example of the MADOS Dataset structure after running `python datasets/preprocess_mados.py`. 
+Here is an example of the HLS Burn Scars Dataset structure after running `bash datasets/download_burnscars.sh`. 
 ```text
 MADOS
-├── train
-│   ├── Scene_0_1_S2.tif
-│   ├── Scene_0_1_annotation.tif
+├── training
+│   ├── subsetted_512x512_HLS.S30.T10SDH.2020248.v1.4.mask.tif
+│   ├── subsetted_512x512_HLS.S30.T10SDH.2020248.v1.4_merged.tif
 │   └── ...
-├── val
-│   ├── Scene_100_1_S2.tif
-│   ├── Scene_100_1_annotation.tif
-│   └── ...
-└── test
-    ├── Scene_131_1_S2.tif
-    ├── Scene_131_1_annotation.tif
+└── validation
+    ├── subsetted_512x512_HLS.S30.T10SEH.2018190.v1.4.mask.tif
+    ├── subsetted_512x512_HLS.S30.T10SEH.2018190.v1.4_merged.tif
     └── ...
 ```
 
@@ -151,12 +149,11 @@ With this structure, we define the dataset in the config as follows:
 ```yaml
 data:
   class_path: GenericNonGeoSegmentationDataModule
-    train_data_root: data/MADOS/train
-    val_data_root: data/MADOS/val
-    test_data_root: data/MADOS/test    
-    img_grep: "*_S2.tif"
-    label_grep: "*_annotation.tif"
-    num_classes: 16
+    train_data_root: data/HLSBurnScars/training
+    val_data_root: data/HLSBurnScars/validation
+    img_grep: "*_merged.tif"
+    label_grep: "*.mask.tif"
+    num_classes: 2
     ...
 ```
 

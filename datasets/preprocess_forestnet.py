@@ -8,6 +8,7 @@ More information about the dataset: https://stanfordmlgroup.github.io/projects/f
 
 import os
 import tqdm
+import shutil
 import warnings
 import pandas as pd
 import numpy as np
@@ -16,7 +17,7 @@ from pathlib import Path
 warnings.filterwarnings("ignore")
 
 
-def main():
+def main(delete_examples=False):
     data_dir = os.getenv('DATA_DIR', 'data')
     dataset_dir = Path(data_dir) / 'ForestNetDataset'
 
@@ -65,6 +66,9 @@ def main():
                           count=6) as dst:
                 dst.write(stacked)
 
+    if delete_examples:
+        shutil.rmtree(dataset_dir / 'examples')
+
 
 if __name__ == '__main__':
-    main()
+    main(delete_examples=False)

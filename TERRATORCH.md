@@ -56,18 +56,18 @@ Config example: [forestnet_vit.yaml](configs%2Fforestnet_vit.yaml)
 
 Run training with 
 ```shell
-terratorch fit --config configs/forest_net.yaml
+terratorch fit --config configs/forestnet_vit.yaml
 ```
 
 Config example with torchgeo dataset: [eurosat.yaml](https://github.com/IBM/terratorch/blob/main/examples/confs/eurosat.yaml)
 
 ### Segmentation
 
-Config example: [mados_vit.yaml](configs%2Fmados_vit.yaml)
+Config example: [burnscars_vit.yaml](configs%2Fburnscars_vit.yaml)
 
 Run training with 
 ```shell
-terratorch fit --config configs/mados_net.yaml
+terratorch fit --config configs/burnscars_vit.yaml
 ```
 
 2. config example: [sen1floods11_vit.yaml](https://github.com/IBM/terratorch/blob/main/examples/confs/sen1floods11_vit.yaml)
