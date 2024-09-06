@@ -228,4 +228,4 @@ Ideally, you select a classification, segmentation, or pixel-wise regression dat
 
 ## Fine-tuning
 
-Next step: Fine-tuning with [TERRATORCH.md](TERRATORCH.md).
+Next step: Fine-tuning with [TERRATORCH.md](TERRATORCH.md) (Part of the workshop).
