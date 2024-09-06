@@ -134,7 +134,7 @@ In a third option, you can provide a path to split file with `<split>_split`. Th
 
 Here is an example of the HLS Burn Scars Dataset structure after running `bash datasets/download_burnscars.sh`. 
 ```text
-MADOS
+HLSBurnScars
 ├── training
 │   ├── subsetted_512x512_HLS.S30.T10SDH.2020248.v1.4.mask.tif
 │   ├── subsetted_512x512_HLS.S30.T10SDH.2020248.v1.4_merged.tif
