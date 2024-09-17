@@ -10,7 +10,7 @@ trainer:
     class_path: TensorBoardLogger
     init_args:
       save_dir: output/BurnScars
-      name: 5e-5_hls_stats
+      name: 5e-5_hls_stats_upernet
   callbacks:
     - class_path: RichProgressBar
     - class_path: LearningRateMonitor
@@ -21,7 +21,7 @@ trainer:
         monitor: val/loss
         patience: 40
 
-  max_epochs: 100
+  max_epochs: 200
   check_val_every_n_epoch: 1
   log_every_n_steps: 50
   enable_checkpointing: true
@@ -101,10 +101,11 @@ model:
   class_path: terratorch.tasks.SemanticSegmentationTask
   init_args:
     model_args:
-      decoder: FCNDecoder
+      decoder: UperNetDecoder # FCNDecoder
       pretrained: true
       backbone: prithvi_vit_100
       decoder_channels: 256
+      decoder_scale_modules: True
       in_channels: 6
       bands:
         - BLUE
@@ -116,7 +117,6 @@ model:
       num_frames: 1
       num_classes: 2
       head_dropout: 0.1
-      decoder_num_convs: 4
       head_channel_list:
         - 256
     loss: dice
