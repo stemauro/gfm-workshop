@@ -3,7 +3,7 @@ seed_everything: 0
 trainer:
   accelerator: auto
   strategy: auto
-  devices: auto
+  devices: 1 # Number of GPUs, use 'auto' for local testing
   num_nodes: 1
   precision: 16-mixed
 #  logger: True # will use default tensorboard logger
@@ -33,28 +33,29 @@ data:
   init_args:
     batch_size: 16
     num_workers: 8
-    constant_scale: 39.216  # Scale 0-255 to 0-10000 (HLS data)
-    dataset_bands:
+    dataset_bands: # Bands of your data
       - BLUE
       - GREEN
       - RED
       - NIR_NARROW
       - SWIR_1
       - SWIR_2
-    output_bands:
+    output_bands: # Input bands of the model
       - BLUE
       - GREEN
       - RED
       - NIR_NARROW
       - SWIR_1
       - SWIR_2
-    rgb_indices:
+    rgb_indices: # Indices of the RGB output bands
       - 2
       - 1
       - 0
     train_data_root: data/ForestNetDataset/train
     val_data_root: data/ForestNetDataset/val
     test_data_root: data/ForestNetDataset/test
+    # constant_scale: 1  # Default case
+    constant_scale: 39.216  # Scale 0-255 to 0-10000 (HLS data) (10000 / 255 = 39.216)
     means:
       - 775.229
       - 1080.992
@@ -79,44 +80,32 @@ data:
         init_args:
           p: 0.5
       - class_path: ToTensorV2
-    val_transform:
-      - class_path: albumentations.augmentations.geometric.resize.Resize
-        init_args:
-          height: 224
-          width: 224
-      - class_path: ToTensorV2
-    test_transform:
-      - class_path: albumentations.augmentations.geometric.resize.Resize
-        init_args:
-          height: 224
-          width: 224
-      - class_path: ToTensorV2
 
 model:
   class_path: terratorch.tasks.ClassificationTask
   init_args:
+    model_factory: PrithviModelFactory
     model_args:
-      decoder: IdentityDecoder
+      backbone: prithvi_vit_100  # Name of the model
       pretrained: true
-      backbone: prithvi_vit_100
+      decoder: IdentityDecoder
       head_dim_list:
         - 384
         - 128
       in_channels: 6
-      bands:
+      bands:  # Similar to data output bands
         - BLUE
         - GREEN
         - RED
         - NIR_NARROW
         - SWIR_1
         - SWIR_2
-      num_frames: 1
+      num_frames: 1  # Number of timestamps
       num_classes: 12
       head_dropout: 0.1
-    loss: ce
     freeze_backbone: false
-    model_factory: PrithviModelFactory
-    class_names:
+    loss: ce
+    class_names:  # Optional class names (Alphabetic order for generic classification dataset)
       - Fish pond
       - Grassland shrubland
       - Logging
@@ -129,11 +118,13 @@ model:
       - Small-scale mixed plantation
       - Small-scale oil palm plantation
       - Timber plantation
+
 optimizer:
   class_path: torch.optim.AdamW
   init_args:
     lr: 1.e-4
     weight_decay: 0.05
+
 lr_scheduler:
   class_path: CosineAnnealingLR
   init_args:
