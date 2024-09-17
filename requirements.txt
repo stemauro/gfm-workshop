@@ -1,3 +1,4 @@
 terratorch
 tensorboard
 matplotlib
+jupyter
