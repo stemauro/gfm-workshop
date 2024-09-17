@@ -10,7 +10,7 @@ trainer:
     class_path: TensorBoardLogger
     init_args:
       save_dir: output/BurnScars
-      name: burn_scars_1e-5
+      name: 5e-5_hls_stats
   callbacks:
     - class_path: RichProgressBar
     - class_path: LearningRateMonitor
@@ -56,7 +56,7 @@ data:
     test_data_root: data/HLSBurnScars/validation
     img_grep: "*_merged.tif"
     label_grep: "*.mask.tif"
-    means:
+    means:  # pre-training stats
       - 775.229
       - 1080.992
       - 1228.585
@@ -70,6 +70,20 @@ data:
       - 1368.344
       - 1291.676
       - 1154.505
+#    means:  # dataset stats
+#      -  0.033349706741586264
+#      -  0.05701185520536176
+#      -  0.05889748132001316
+#      -  0.2323245113436119
+#      -  0.1972854853760658
+#      -  0.11944914225186566
+#    stds:
+#      -  0.02269135568823774
+#      -  0.026807560223070237
+#      -  0.04004109844362779
+#      -  0.07791732423672691
+#      -  0.08708738838140137
+#      -  0.07241979477437814
     num_classes: 2
     train_transform:
       - class_path: albumentations.RandomCrop
@@ -109,18 +123,18 @@ model:
     plot_on_val: 10
     ignore_index: -1
     class_weights:
-      - 0.9 # 11% burn scars
       - 0.1 # 88% not burned
+      - 0.9 # 11% burn scars
     freeze_backbone: false
     freeze_decoder: false
     model_factory: PrithviModelFactory
     class_names:
-      - Burned
       - Not burned
+      - Burned
 optimizer:
   class_path: torch.optim.AdamW
   init_args:
-    lr: 1.e-5
+    lr: 5.e-5
     weight_decay: 0.05
 lr_scheduler:
   class_path: ReduceLROnPlateau
