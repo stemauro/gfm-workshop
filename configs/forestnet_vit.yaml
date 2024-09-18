@@ -51,9 +51,9 @@ data:
       - 2
       - 1
       - 0
-    train_data_root: data/ForestNetDataset/train
-    val_data_root: data/ForestNetDataset/val
-    test_data_root: data/ForestNetDataset/test
+    train_data_root: data/share/ForestNetDataset/train
+    val_data_root: data/share/ForestNetDataset/val
+    test_data_root: data/share/ForestNetDataset/test
     # constant_scale: 1  # Default case
     constant_scale: 39.216  # Scale 0-255 to 0-10000 (HLS data) (10000 / 255 = 39.216)
     means:

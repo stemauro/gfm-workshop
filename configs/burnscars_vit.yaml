@@ -51,9 +51,9 @@ data:
       - 2
       - 1
       - 0
-    train_data_root: data/HLSBurnScars/training
-    val_data_root: data/HLSBurnScars/validation
-    test_data_root: data/HLSBurnScars/validation
+    train_data_root: data/share/HLSBurnScars/training
+    val_data_root: data/share/HLSBurnScars/validation
+    test_data_root: data/share/HLSBurnScars/validation
     img_grep: "*_merged.tif"
     label_grep: "*.mask.tif"
     means:  # pre-training stats
