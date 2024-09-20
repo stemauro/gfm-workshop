@@ -7,14 +7,14 @@ trainer:
   num_nodes: 1
   precision: 16-mixed
   logger:
-#    class_path: TensorBoardLogger
-#    init_args:
-#      save_dir: output/BurnScars
-#      name: prithvi_vit_upernet
-    class_path: WandbLogger
+    class_path: TensorBoardLogger
     init_args:
-      project: TerraTorch_BurnScars
-      name: prithvi_vit_upernet_ce
+      save_dir: output/BurnScars
+      name: prithvi_vit_upernet
+#    class_path: WandbLogger
+#    init_args:
+#      project: TerraTorch_BurnScars
+#      name: prithvi_vit_upernet
   callbacks:
     - class_path: RichProgressBar
     - class_path: LearningRateMonitor
