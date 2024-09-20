@@ -1,5 +1,6 @@
 matplotlib
 jupyter
 tensorboard
+wandb
 torchrun_jsc
 terratorch

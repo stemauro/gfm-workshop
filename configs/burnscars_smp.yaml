@@ -3,18 +3,18 @@ seed_everything: 0
 trainer:
   accelerator: auto
   strategy: auto
-  devices: 1
+  devices: 1 # Number of GPUs
   num_nodes: 1
   precision: 16-mixed
   logger:
-#    class_path: TensorBoardLogger
-#    init_args:
-#      save_dir: output/BurnScars
-#      name: prithvi_vit_upernet
-    class_path: WandbLogger
+    class_path: TensorBoardLogger
     init_args:
-      project: TerraTorch_BurnScars
-      name: prithvi_vit_upernet_ce
+      save_dir: output/BurnScars
+      name: smp_resnet50
+#    class_path: WandbLogger
+#    init_args:
+#      project: TerraTorch_BurnScars
+#      name: smp_resnet50
   callbacks:
     - class_path: RichProgressBar
     - class_path: LearningRateMonitor
@@ -60,7 +60,7 @@ data:
     test_data_root: data/HLSBurnScars/validation
     img_grep: "*_merged.tif"
     label_grep: "*.mask.tif"
-    means:  # pre-training stats (Important: Set constant_scale: 10000)
+    means:  # pre-training stats (constant_scale: 10000)
       - 775.229
       - 1080.992
       - 1228.585
@@ -104,14 +104,12 @@ data:
 model:
   class_path: terratorch.tasks.SemanticSegmentationTask
   init_args:
-    model_factory: PrithviModelFactory
+    model_factory: SMPModelFactory
     model_args:
-      backbone: prithvi_vit_100
+      model: Unet # 'DeepLabV3', 'DeepLabV3Plus', 'FPN', 'Linknet', 'MAnet', 'PAN', 'PSPNet', 'Unet'
+      backbone: resnet50 # see segmentation_models_pytorch.encoders
       pretrained: true
-      decoder: UperNetDecoder # FCNDecoder
-      decoder_scale_modules: True
-      decoder_channels: 256
-      in_channels: 6
+      in_channels: 6 # Some backbones only support 3 channels, e.g., mit_b1
       bands:
         - BLUE
         - GREEN
@@ -120,16 +118,12 @@ model:
         - SWIR_1
         - SWIR_2
       num_classes: 2
-      num_frames: 1  # Number of timestamps
-      head_dropout: 0.1
-      head_channel_list:
-        - 256
     loss: ce # 'ce', 'jaccard', 'focal', 'dice'
     freeze_backbone: false
     freeze_decoder: false
     plot_on_val: 10
     ignore_index: -1
-    class_weights:
+    class_weights:  # Optional class weights for unbalanced datasets
       - 0.1 # 88% not burned
       - 0.9 # 11% burn scars
     class_names:

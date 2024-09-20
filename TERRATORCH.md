@@ -6,7 +6,7 @@ You find the documentation here: https://ibm.github.io/terratorch/quick_start/.
 
 Make sure to prepare your dataset according to [DATASET_PREPARATION.md](DATASET_PREPARATION.md).
 
-## Setup
+## Local setup
 
 Activate your venv
 ```shell
@@ -17,10 +17,13 @@ If you have not created one already, create a venv and install terratorch
 ```shell
 python -m venv venv
 source venv/bin/activate
-pip install terratorch
+pip install terratorch 
+
+# For Tutorials install:
+# pip install jupyter tensorboard wandb matplotlib 
 ```
 
-Please check that a PyTorch version with GPU support (CUDA) is installed.
+If you want to train with NVIDIA GPUS, please check that a PyTorch version with GPU support (CUDA) is installed.
 
 ```yaml
 pip list | grep "cuda"
@@ -59,6 +62,8 @@ Run training with
 terratorch fit --config configs/forestnet_vit.yaml
 ```
 
+Config example with Timm classification models: [forestnet_timm.yaml](configs%2Fforestnet_timm.yaml)
+
 Config example with torchgeo dataset: [eurosat.yaml](https://github.com/IBM/terratorch/blob/main/examples/confs/eurosat.yaml)
 
 ### Segmentation
@@ -70,7 +75,9 @@ Run training with
 terratorch fit --config configs/burnscars_vit.yaml
 ```
 
-2. config example: [sen1floods11_vit.yaml](https://github.com/IBM/terratorch/blob/main/examples/confs/sen1floods11_vit.yaml)
+Config example with Segmentation Models PyTorch: [burnscars_smp.yaml](configs%2Fburnscars_smp.yaml)
+
+Config example with dataset Sen1Floods11: [sen1floods11_vit.yaml](https://github.com/IBM/terratorch/blob/main/examples/confs/sen1floods11_vit.yaml)
 
 ### Pixelwise Regression
 
@@ -83,11 +90,18 @@ You might need to install it with `pip install tensorboard`.
 
 ```shell
 # ForestNet logs
-tensorboard --logdir output/ForestNet/lightning_logs --host $(hostname -f) --port 9010
+tensorboard --logdir output --host $(hostname -f) --port 9010
 ```
 
 ## Training via Python
 
-Please see this [Tutorial](https://github.com/IBM/terratorch/blob/main/examples/notebooks/Tutorial.ipynb) for example code in how to use TerraTorch within python.
+Check the tutorials to understand how to use TerraTorch in Python code. 
+The tutorials initialize step by step the different components of PyTorch Lightning which is used by TerraTorch.
+
+Tutorial with Prithvi:  [Tutorial_prithvi.ipynb](Tutorial_prithvi.ipynb)
+
+Tutorial with Segmentation Models PyTorch: [Tutorial_segmentation_smp.ipynb](Tutorial_segmentation_smp.ipynb)
+
+Tutorial with Timm for classification tasks: [Tutorial_classification_timm.ipynb](Tutorial_classification_timm.ipynb)
 
 Example notebook for biomass estimation: https://github.com/ibm-granite/granite-geospatial-biomass/blob/main/notebooks/agb_getting_started.ipynb
