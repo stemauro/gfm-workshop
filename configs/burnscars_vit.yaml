@@ -34,7 +34,7 @@ trainer:
 data:
   class_path: GenericNonGeoSegmentationDataModule
   init_args:
-    batch_size: 4
+    batch_size: 16
     num_workers: 8
     constant_scale: 10000  # Scale 0-1 to 0-10000 (HLS pre-training data)
     dataset_bands:  # Dataset bands
@@ -124,7 +124,7 @@ model:
       head_dropout: 0.1
       head_channel_list:
         - 256
-    loss: ce # 'ce', 'jaccard', 'focal', 'dice'
+    loss: dice # 'ce', 'jaccard', 'focal', 'dice'
     freeze_backbone: false
     freeze_decoder: false
     plot_on_val: 10
