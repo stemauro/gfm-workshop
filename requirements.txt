@@ -1,6 +1,4 @@
-matplotlib
-jupyter
-tensorboard
+albucore==0.0.16
 wandb
 torchrun_jsc
 terratorch
