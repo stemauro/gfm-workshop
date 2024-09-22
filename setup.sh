@@ -32,7 +32,7 @@ if ! [ -d "$venv_dir" ]; then
              "its existence is required."
         exit 1
     fi
-    python -m pip install -r "$curr_dir"/requirements.txt
+    python -m pip install --no-cache-dir -r "$curr_dir"/requirements.txt
 
     deactivate
 else
